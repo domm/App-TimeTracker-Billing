@@ -8,20 +8,28 @@ use 5.010;
 our $VERSION = "1.000";
 
 use Moose::Role;
+use DateTime;
 
 sub munge_billing_start_attribs {
     my ( $class, $meta, $config ) = @_;
-    my $cfg = $config->{billing};
-    my $req = $cfg->{required} || 0;
-
-    $meta->add_attribute(
-        'billing' => {
-            isa           => 'Str',
-            is            => 'ro',
-            required      => $req,
-            documentation => 'Billing',
-        }
+    my $billing = $config->{billing};
+    my %attr    = (
+        isa           => 'Str',
+        is            => 'ro',
+        documentation => 'Billing',
     );
+    $attr{required} = 1 if $billing->{required};
+
+    if ( my $default = $billing->{default} ) {
+        if ( $default eq 'strftime' ) {
+            my $format = $billing->{strftime};
+            $attr{default} = sub {
+                return DateTime->now->strftime($format);
+            }
+        }
+    }
+
+    $meta->add_attribute( 'billing' => \%attr );
 }
 after '_load_attribs_start'    => \&munge_billing_start_attribs;
 after '_load_attribs_append'   => \&munge_billing_start_attribs;
@@ -30,17 +38,7 @@ after '_load_attribs_continue' => \&munge_billing_start_attribs;
 before [ 'cmd_start', 'cmd_continue', 'cmd_append' ] => sub {
     my $self = shift;
 
-    if (my $bconf = $self->config->{billing}) {
-        my $billing = $self->billing if $self->billing;
-        if (!$billing && $bconf->{default}) {
-            if ($bconf->{default} eq 'strftime') {
-                my $start = $self->at || DateTime->now;
-                my $format = $bconf->{strftime};
-                $billing = $start->strftime($format);
-            }
-        }
-        $self->add_tag( $billing ) if $billing;
-    }
+    $self->add_tag( $self->billing ) if $self->billing;
 };
 
 no Moose::Role;
