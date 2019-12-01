@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.010;
 
-# ABSTRACT: add a billing point to each task
+# ABSTRACT: Add a billing point to tasks
 
 our $VERSION = "1.000";
 
