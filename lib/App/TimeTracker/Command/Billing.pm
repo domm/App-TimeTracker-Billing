@@ -54,45 +54,62 @@ Add a billing point to each task. Could be based on the current date (eg '2019/Q
 
 =head2 plugins
 
-Add C<Category> to the list of plugins.
+Add C<Billing> to the list of plugins.
 
-=head2 category
+=head2 billing
 
-add a hash named C<category>, containing the following keys:
+add a hash named C<billing>, containing the following keys:
 
 =head3 required
 
-Set to a true value if 'category' should be a required command line option
+Set to a true value if 'billing' should be a required command line option
 
-=head3 categories
+=head3 default
 
-A list (ARRAYREF) of category names.
+Set to the method to calculate the default billing point. Currently there is only one method implemented, C<strftime>
+
+=head3 strftime
+
+When using C<default = strftime>, specify the L<DateTime::strftime> format. Some examples:
+
+=over
+
+=item * C<%Y/%m> -> 2019/12
+
+=item * C<%Y/Q%{quarter}> -> 2019/Q4
+
+=back
 
 =head1 NEW COMMANDS
 
-=head2 statistic
-
-Print stats on time worked per category
-
-    domm@t430:~/validad$ tracker statistic --last day
-    From 2016-01-29T00:00:00 to 2016-01-29T23:59:59 you worked on:
-                                   07:39:03
-       9.9%  bug                   00:45:23
-      33.2%  feature               02:32:21
-      28.3%  maint                 02:09:52
-      12.9%  meeting               00:59:21
-      15.7%  support               01:12:06
-
-You can use the same options as in C<report> to define which tasks you
-want stats on (C<--from, --until, --this, --last, --ftag, --fproject, ..>)
+no new commands
 
 =head1 CHANGES TO OTHER COMMANDS
 
 =head2 start, continue, append
 
-=head3 --category
+=head3 --billing
 
-    ~/perl/Your-Project$ tracker start --category feature
+    ~/perl/Your-Project$ tracker start --billing offer#42
 
-Make sure that 'feature' is a valid category and store it as a tag.
+Add a tag 'offer#42', which you can later use to filter all tasks
+belonging to an offer / sub-project etc
+
+If you set up a C<default> using C<strftime> you can automatically add
+a tag for eg the current month or quarter. This is very helpful for
+mapping tasks to maintainance contracts.
+
+  cat .tracker.json
+  "billing":{
+      "required":false,
+      "default": "strftime",
+      "strftime": "%Y/Q%{quarter}"
+  }
+
+  ~/perl/Your-Project$ tracker start
+  Started working on Your-Project (2019/Q4) at 22:26:07
+
+
+
+
 
