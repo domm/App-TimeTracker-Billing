@@ -5,43 +5,40 @@ use 5.010;
 
 # ABSTRACT: add a billing point to each task
 
-our $VERSION = "1.002";
+our $VERSION = "1.000";
 
 use Moose::Role;
 
-sub munge_start_attribs {
+sub munge_billing_start_attribs {
     my ( $class, $meta, $config ) = @_;
     my $cfg = $config->{billing};
-    return unless $cfg && $cfg->{billing};
+    my $req = $cfg->{required} || 0;
 
     $meta->add_attribute(
-        'category' => {
-            isa           => 'String',
+        'billing' => {
+            isa           => 'Str',
             is            => 'ro',
-            required      => $cfg->{required} || 0,
+            required      => $req,
             documentation => 'Billing',
         }
     );
 }
-after '_load_attribs_start'    => \&munge_start_attribs;
-after '_load_attribs_append'   => \&munge_start_attribs;
-after '_load_attribs_continue' => \&munge_start_attribs;
+after '_load_attribs_start'    => \&munge_billing_start_attribs;
+after '_load_attribs_append'   => \&munge_billing_start_attribs;
+after '_load_attribs_continue' => \&munge_billing_start_attribs;
 
 before [ 'cmd_start', 'cmd_continue', 'cmd_append' ] => sub {
     my $self = shift;
 
     if (my $bconf = $self->config->{billing}) {
         my $billing = $self->billing if $self->billing;
-        warn "BILLING 1 $billing";
         if (!$billing && $bconf->{default}) {
             if ($bconf->{default} eq 'strftime') {
-                warn "START ".$self->at;
-                my $now = DateTime->now;
+                my $start = $self->at || DateTime->now;
                 my $format = $bconf->{strftime};
-                $billing = $now->format($format);
+                $billing = $start->strftime($format);
             }
         }
-        warn "BILLING 2 $billing";
         $self->add_tag( $billing ) if $billing;
     }
 };
