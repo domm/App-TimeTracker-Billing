@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.010;
 
-# ABSTRACT: Add a billing point to tasks
+# ABSTRACT: Add a billing point as a tag to tasks
 
 our $VERSION = "1.000";
 
@@ -31,6 +31,7 @@ sub munge_billing_start_attribs {
 
     $meta->add_attribute( 'billing' => \%attr );
 }
+
 after '_load_attribs_start'    => \&munge_billing_start_attribs;
 after '_load_attribs_append'   => \&munge_billing_start_attribs;
 after '_load_attribs_continue' => \&munge_billing_start_attribs;
@@ -90,14 +91,14 @@ no new commands
 
 =head3 --billing
 
-    ~/perl/Your-Project$ tracker start --billing offer#42
+    ~/perl/Your-Project$ tracker start --billing offer-42
 
-Add a tag 'offer#42', which you can later use to filter all tasks
+Add a tag 'offer-42', which you can later use to filter all tasks
 belonging to an offer / sub-project etc
 
 If you set up a C<default> using C<strftime> you can automatically add
-a tag for eg the current month or quarter. This is very helpful for
-mapping tasks to maintainance contracts.
+a billing tag for eg the current month or quarter. This is very
+helpful for mapping tasks to maintainance contracts.
 
   cat .tracker.json
   "billing":{
@@ -108,8 +109,4 @@ mapping tasks to maintainance contracts.
 
   ~/perl/Your-Project$ tracker start
   Started working on Your-Project (2019/Q4) at 22:26:07
-
-
-
-
 
