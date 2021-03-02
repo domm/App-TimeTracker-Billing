@@ -4,7 +4,7 @@ App::TimeTracker::Command::Billing - Add a billing point as a tag to tasks
 
 # VERSION
 
-version 1.000
+version 1.001
 
 # DESCRIPTION
 
@@ -24,13 +24,17 @@ add a hash named `billing`, containing the following keys:
 
 Set to a true value if 'billing' should be a required command line option
 
+### prefix
+
+If set, add this prefix to the billing point when storing it as tag. Useful to discern regular tags from billing point pseudo tags
+
 ### default
 
 Set to the method to calculate the default billing point. Currently there is only one method implemented, `strftime`
 
 ### strftime
 
-When using `default = strftime`, specify the [DateTime::strftime](https://metacpan.org/pod/DateTime::strftime) format. Some examples:
+When using `default = strftime`, specify the [DateTime::strftime](https://metacpan.org/pod/DateTime%3A%3Astrftime) format. Some examples:
 
 - `%Y/%m` -> 2019/12
 - `%Y/Q%{quarter}` -> 2019/Q4
@@ -66,11 +70,11 @@ helpful for mapping tasks to maintainance contracts.
 
 # AUTHOR
 
-Thomas Klausner <domm@cpan.org>
+Thomas Klausner <domm@plix.at>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2019 by Thomas Klausner.
+This software is copyright (c) 2011 - 2021 by Thomas Klausner.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
