@@ -26,7 +26,7 @@ Set to a true value if 'billing' should be a required command line option
 
 ### prefix
 
-If set, add this prefix to the billing point when storing it as tag. Useful to discern regular tags from billing point pseudo tags
+If set, add this prefix to the billing point when storing it as tag. Useful to discern regular tags from billing point pseudo tags.
 
 ### default
 
