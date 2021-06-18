@@ -27,6 +27,9 @@ sub munge_billing_start_attribs {
                 return DateTime->now->strftime($format);
             }
         }
+        else {
+            $attr{default} = $default;
+        }
     }
 
     $meta->add_attribute( 'billing' => \%attr );
